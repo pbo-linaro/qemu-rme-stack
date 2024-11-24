@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-cp -f ./realm_vm.sh ./cca-v3/realm_vm.sh
+cp -f ./realm_vm.sh ./build/realm_vm.sh
 
 # virtio-9p-device:
 # this shares the current directory with the host, providing the files needed
@@ -14,9 +14,9 @@ qemu_cmd='qemu-system-aarch64 \
 -M virt,virtualization=on,secure=on,gic-version=3 \
 -M acpi=off -cpu max,x-rme=on -m 8G -smp 8 \
 -nographic \
--bios ./cca-v3/out/bin/flash.bin \
--kernel ./cca-v3/out/bin/Image \
--drive format=raw,if=none,file=./cca-v3/out-br/images/rootfs.ext4,id=hd0 \
+-bios ./build/out/bin/flash.bin \
+-kernel ./build/out/bin/Image \
+-drive format=raw,if=none,file=./build/out-br/images/rootfs.ext4,id=hd0 \
 -device virtio-blk-pci,drive=hd0 \
 -nodefaults \
 -serial tcp:localhost:54320 \
@@ -30,7 +30,7 @@ qemu_cmd='qemu-system-aarch64 \
 -append "root=/dev/vda console=hvc0" \
 -device virtio-net-pci,netdev=net0 -netdev user,id=net0 \
 -device virtio-9p-device,fsdev=shr0,mount_tag=shr0 \
--fsdev local,security_model=none,path=./cca-v3,id=shr0'
+-fsdev local,security_model=none,path=./build,id=shr0'
 
 # rawer send control-c instead of killing socat
 unset TMUX

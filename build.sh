@@ -11,11 +11,11 @@ make -j$(nproc) toolchains
 make -j$(nproc)
 
 cd ../../
-mkdir -p build
+mkdir -p rme-stack
 for o in out/bin/Image \
          out-br/images/rootfs.cpio \
          out-br/images/rootfs.ext4 \
          out/bin/flash.bin
 do
-    rsync -avL --mkpath cca-v3/$o build/$(dirname $o)/
+    rsync -avL --mkpath cca-v3/$o rme-stack/$(dirname $o)/
 done

@@ -1,4 +1,4 @@
-Build RME Stack
+QEMU RME Stack
 ===============
 
 Build RME Stack with OP-TEE using a container.

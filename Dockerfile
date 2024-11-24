@@ -3,6 +3,7 @@ FROM docker.io/ubuntu:24.04
 RUN apt update && apt install -y \
 build-essential \
 repo \
+git \
 acpica-tools \
 make \
 python3-pyelftools \
@@ -25,3 +26,6 @@ wget \
 cpio \
 rsync \
 bc
+
+RUN git config --global user.email "you@example.com"
+RUN git config --global user.name "Your Name"

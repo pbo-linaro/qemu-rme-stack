@@ -8,7 +8,7 @@ Full instructions are [here](https://linaro.atlassian.net/wiki/spaces/QEMU/pages
 # build image using:
 ./run.sh ./build.sh
 # final images will be available in build/ (cca-v3 contains source and binaries)
-# launch qemu:
+# launch a tmux session with qemu and various output
 PATH=/path/to/qemu:$PATH ./launch_vm.sh
 # login in Host using root (no password)
 # launch guest using

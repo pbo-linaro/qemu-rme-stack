@@ -16,7 +16,7 @@ launch_vm \
 $board \
 qemu-system-aarch64 \
 -M sbsa-ref \
--cpu max,x-rme=on,sme=off -m 8G \
+-cpu max,x-rme=on,sme=off -m 2G \
 -nographic \
 -drive file=$out/images/SBSA_FLASH0.fd,format=raw,if=pflash \
 -drive file=$out/images/SBSA_FLASH1.fd,format=raw,if=pflash \

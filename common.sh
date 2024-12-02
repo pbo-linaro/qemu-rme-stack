@@ -1,5 +1,5 @@
 op_tee_version=4.2.0
-cca_version=3
+cca_version=4
 
 assets_folder()
 {

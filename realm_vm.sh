@@ -30,7 +30,7 @@ add_kernel_arg () {
 add_qemu_arg -M virt,gic-version=3 -cpu host -enable-kvm
 add_qemu_arg -smp 2 -m $VM_MEMORY
 add_qemu_arg -M confidential-guest-support=rme0
-add_qemu_arg -object rme-guest,id=rme0,measurement-algo=sha512
+add_qemu_arg -object rme-guest,id=rme0
 add_qemu_arg -device virtio-net-pci,netdev=net0,romfile=""
 add_qemu_arg -netdev user,id=net0
 

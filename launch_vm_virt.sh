@@ -16,7 +16,7 @@ launch_vm \
 $board \
 qemu-system-aarch64 \
 -M virt,virtualization=on,secure=on,gic-version=3 \
--M acpi=off -cpu max,x-rme=on -m 2G -smp 8 \
+-M acpi=off -cpu max,x-rme=on,pauth-impdef=on -m 2G \
 -nographic \
 -bios $out/out/bin/flash.bin \
 -kernel $out/out/bin/Image \

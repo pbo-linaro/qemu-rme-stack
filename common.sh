@@ -1,10 +1,9 @@
-op_tee_version=4.2.0
 cca_version=4
 
 assets_folder()
 {
     board=$1
-    echo rme-stack-op-tee-${op_tee_version}-cca-v${cca_version}-${board}
+    echo rme-stack-cca-v${cca_version}-${board}
 }
     
 build_for_board()
@@ -16,10 +15,10 @@ build_for_board()
     board=$1; shift
     out_files="$*"
     
-    work=build-op-tee-${op_tee_version}-cca-v${cca_version}-${board}
+    work=build-cca-v${cca_version}-${board}
     mkdir -p $work
     cd $work
-    repo init -u https://git.codelinaro.org/linaro/dcap/op-tee-${op_tee_version}/manifest.git \
+    repo init -u https://git.codelinaro.org/linaro/dcap/op-tee-4.2.0/manifest.git \
               -b cca/v${cca_version} -m ${board}_cca.xml
     repo sync -j$(nproc) --no-clone-bundle
     cd build

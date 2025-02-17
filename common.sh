@@ -35,7 +35,7 @@ build_for_board()
     done
 }
 
-launch_vm()
+run_vm()
 {
     board=$1; shift
     qemu_cmd="$*"

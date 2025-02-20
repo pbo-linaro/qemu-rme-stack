@@ -11,9 +11,6 @@ qemu_aarch64_cmd=$*; shift
 
 source ./common.sh
 
-board=qemu_v8
-out=$(assets_folder $board)
-
 # virtio-9p-device:
 # this shares the current directory with the host, providing the files needed
 # to run the guest.
@@ -21,15 +18,16 @@ out=$(assets_folder $board)
 # Firmware (port 54320), Secure payload (54321), host (54322) and guest (54323).
 #
 # run with nokaslr to allow debug linux kernel
+assets_folder=virt/run
 run_vm \
-$board \
+$assets_folder \
 $qemu_aarch64_cmd \
 -M virt,virtualization=on,secure=on,gic-version=3 \
 -M acpi=off -cpu max,x-rme=on,pauth-impdef=on -m 2G \
 -nographic \
--bios $out/out/bin/flash.bin \
--kernel $out/out/bin/Image \
--drive format=raw,if=none,file=$out/out-br/images/rootfs.ext4,id=hd0 \
+-bios $assets_folder/out/bin/flash.bin \
+-kernel $assets_folder/out/bin/Image \
+-drive format=raw,if=none,file=$assets_folder/out-br/images/rootfs.ext4,id=hd0 \
 -device virtio-blk-pci,drive=hd0 \
 -nodefaults \
 -serial tcp:localhost:54320 \
@@ -42,5 +40,5 @@ $qemu_aarch64_cmd \
 -device virtconsole,chardev=hvc1 \
 -device virtio-net-pci,netdev=net0 -netdev user,id=net0 \
 -device virtio-9p-device,fsdev=shr0,mount_tag=shr0 \
--fsdev local,security_model=none,path=$out,id=shr0 \
+-fsdev local,security_model=none,path=$assets_folder,id=shr0 \
 -append '"root=/dev/vda console=hvc0 nokaslr"'

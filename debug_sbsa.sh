@@ -9,8 +9,8 @@ fi
 
 source ./common.sh
 
-assets=$(assets_folder sbsa)
-cat > $assets/gdb_debug_commands << EOF
+assets=sbsa/run
+cat > $assets/gdb << EOF
 # If you want to debug edk2, stack must be built with EDK2_BUILD=DEBUG.
 # For edk2, we need to find where each file is loaded.
 # Check QEMU output for 'Loading DxeCore at 0x00BF265000 EntryPoint=0x00BF26E8F4'
@@ -40,5 +40,5 @@ target remote :1234
 c
 EOF
 
-export RUN_VM_TMUX_EXTRA_COMMANDS="new-window ./container.sh cgdb -d gdb-multiarch -x $assets/gdb_debug_commands"
+export RUN_VM_TMUX_EXTRA_COMMANDS="new-window ./container.sh cgdb -d gdb-multiarch -x $assets/gdb"
 ./run_sbsa.sh "$@" -S -s -smp 1

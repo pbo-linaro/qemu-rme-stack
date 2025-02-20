@@ -4,8 +4,17 @@ set -euo pipefail
 
 source ./common.sh
 
-build_for_board \
-    sbsa \
+build_folder=sbsa/build
+assets_folder=sbsa/run
+
+build_board \
+    $build_folder \
+    sbsa_cca.xml \
+    cca/v4
+
+copy_assets \
+    $build_folder \
+    $assets_folder \
     out/bin/Image \
     out-br/images/rootfs.cpio \
     out-br/images/rootfs.ext4 \

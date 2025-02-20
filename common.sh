@@ -1,25 +1,17 @@
-cca_version=4
-
-assets_folder()
-{
-    board=$1
-    echo rme-stack-cca-v${cca_version}-${board}
-}
-
-build_for_board()
+build_board()
 {
     if [ -z "${DISABLE_CONTAINER_CHECK:-}" ]; then
         echo "run command using ./container.sh ./build_..."
         exit 1
     fi
-    board=$1; shift
-    out_files="$*"
+    build_folder=$1; shift
+    manifest=$1; shift
+    branch=$1; shift
 
-    work=build-cca-v${cca_version}-${board}
-    mkdir -p $work
-    cd $work
+    mkdir -p $build_folder
+    pushd $build_folder
     repo init -u https://git.codelinaro.org/linaro/dcap/op-tee-4.2.0/manifest.git \
-              -b cca/v${cca_version} -m ${board}_cca.xml
+              -b ${branch} -m ${manifest}
     repo sync -j$(nproc) --no-clone-bundle
     cd build
 
@@ -38,22 +30,28 @@ build_for_board()
         RMM_BUILD=Debug RMM_LOG_LEVEL=40 \
         TF_A_DEBUG=1 TF_A_LOGLVL=40
 
-    cd ../../
-    out=$(assets_folder $board)
-    rm -rf $out
-    for o in $out_files
+    popd
+}
+
+copy_assets()
+{
+    build_folder=$1; shift
+    assets_folder=$1; shift
+    assets_files="$*"
+
+    rm -rf $assets_folder
+    for o in $assets_files
     do
-        rsync -avL --mkpath $work/$o $out/$(dirname $o)/
+        rsync -avL --mkpath $build_folder/$o $assets_folder/$(dirname $o)/
     done
 }
 
 run_vm()
 {
-    board=$1; shift
+    assets_folder=$1; shift
     qemu_cmd="$*"
-    out=$(assets_folder $board)
 
-    cp -f ./realm_vm.sh $out/realm_vm.sh
+    cp -f ./realm_vm.sh $assets_folder/realm_vm.sh
 
     RUN_VM_TMUX_EXTRA_COMMANDS=${RUN_VM_TMUX_EXTRA_COMMANDS:-}
     # rawer send control-c instead of killing socat
@@ -63,7 +61,7 @@ run_vm()
         split-window 'echo Secure Payload; socat - TCP-LISTEN:54321' \; \
         split-window 'echo Host; socat -,rawer TCP-LISTEN:54322' \; \
         split-window 'echo Guest; socat -,rawer TCP-LISTEN:54323' \; \
-        select-layout tiled \; \
+        select-layassets tiled \; \
         split-window -p 20 bash -cx "$qemu_cmd || read" \; \
         select-pane -t 3 \; \
         ${RUN_VM_TMUX_EXTRA_COMMANDS}

@@ -28,6 +28,9 @@ build_for_board()
     # This fix only applies for sbsa.
     sed -e 's#Image root=/dev/vda console=hvc0"#Image root=/dev/vda console=hvc0 nokaslr"#' -i Makefile
 
+    # change optimization build for tf-rmm debug build
+    sed -e 's/Og/O0/' -i ../rmm/toolchains/common.cmake
+
     make -j$(nproc) toolchains
     # In case you want to debug edk2, you need to add EDK2_BUILD=DEBUG
     # We build TF-A and RMM in Debug, but keep the same log level than Release.

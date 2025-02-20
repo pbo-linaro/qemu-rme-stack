@@ -2,6 +2,13 @@
 
 set -euo pipefail
 
+if [ $# -lt 1 ]; then
+    echo "usage: qemu_aarch64_cmd"
+    exit 1
+fi
+
+qemu_aarch64_cmd=$*; shift
+
 source ./common.sh
 
 board=qemu_v8
@@ -14,7 +21,7 @@ out=$(assets_folder $board)
 # Firmware (port 54320), Secure payload (54321), host (54322) and guest (54323).
 run_vm \
 $board \
-qemu-system-aarch64 \
+$qemu_aarch64_cmd \
 -M virt,virtualization=on,secure=on,gic-version=3 \
 -M acpi=off -cpu max,x-rme=on,pauth-impdef=on -m 2G \
 -nographic \

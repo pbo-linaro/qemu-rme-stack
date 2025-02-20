@@ -10,8 +10,8 @@ Full instructions are [here](https://linaro.atlassian.net/wiki/spaces/QEMU/pages
 ./container.sh ./build_sbsa.sh # for sbsa platform
 
 # run a tmux session with qemu and various output
-PATH=/path/to/qemu:$PATH ./run_virt.sh # for virt platform
-PATH=/path/to/qemu:$PATH ./run_sbsa.sh # for sbsa platform
+./run_virt.sh /path/to/qemu-system-aarch64 # for virt platform
+./run_sbsa.sh /path/to/qemu-system-aarch64 # for sbsa platform
 
 # login in Host using root (no password)
 # run guest using

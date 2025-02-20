@@ -20,5 +20,6 @@ You need podman installed on your system to build and debug platforms.
 /mnt/realm_vm.sh
 
 # to debug running kernel, and trusted firmwares (TF-A, TF-RMM), use:
-./debug_virt.sh /path/to/qemu-system-aarch64
+./debug_virt.sh /path/to/qemu-system-aarch64 # for virt platform
+./debug_sbsa.sh /path/to/qemu-system-aarch64 # for sbsa platform
 ```

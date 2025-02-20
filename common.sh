@@ -22,6 +22,12 @@ build_for_board()
               -b cca/v${cca_version} -m ${board}_cca.xml
     repo sync -j$(nproc) --no-clone-bundle
     cd build
+
+    # add nokaslr to kernel command line, to be able to debug it.
+    # Virt boots with a kernel, while sbsa boots with an image.
+    # This fix only applies for sbsa.
+    sed -e 's#Image root=/dev/vda console=hvc0"#Image root=/dev/vda console=hvc0 nokaslr"#' -i Makefile
+
     make -j$(nproc) toolchains
     # In case you want to debug edk2, you need to add EDK2_BUILD=DEBUG
     # We build TF-A and RMM in Debug, but keep the same log level than Release.

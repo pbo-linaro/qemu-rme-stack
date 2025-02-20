@@ -19,6 +19,8 @@ out=$(assets_folder $board)
 # to run the guest.
 # -serial: the following parameters allow to use separate consoles for
 # Firmware (port 54320), Secure payload (54321), host (54322) and guest (54323).
+#
+# run with nokaslr to allow debug linux kernel
 run_vm \
 $board \
 $qemu_aarch64_cmd \
@@ -38,7 +40,7 @@ $qemu_aarch64_cmd \
 -chardev socket,mux=on,id=hvc1,port=54323,host=localhost \
 -device virtio-serial-device \
 -device virtconsole,chardev=hvc1 \
--append '"root=/dev/vda console=hvc0"' \
 -device virtio-net-pci,netdev=net0 -netdev user,id=net0 \
 -device virtio-9p-device,fsdev=shr0,mount_tag=shr0 \
--fsdev local,security_model=none,path=$out,id=shr0
+-fsdev local,security_model=none,path=$out,id=shr0 \
+-append '"root=/dev/vda console=hvc0 nokaslr"'

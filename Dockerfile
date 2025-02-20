@@ -30,3 +30,7 @@ bc
 RUN git config --global user.email "you@example.com"
 RUN git config --global user.name "Your Name"
 RUN git config --global color.ui false
+
+RUN apt update && apt install -y \
+cgdb \
+gdb-multiarch

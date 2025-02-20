@@ -5,7 +5,7 @@ assets_folder()
     board=$1
     echo rme-stack-cca-v${cca_version}-${board}
 }
-    
+
 build_for_board()
 {
     if [ -z "${DISABLE_CONTAINER_CHECK:-}" ]; then
@@ -14,7 +14,7 @@ build_for_board()
     fi
     board=$1; shift
     out_files="$*"
-    
+
     work=build-cca-v${cca_version}-${board}
     mkdir -p $work
     cd $work
@@ -23,8 +23,12 @@ build_for_board()
     repo sync -j$(nproc) --no-clone-bundle
     cd build
     make -j$(nproc) toolchains
-    make -j$(nproc)
-    
+    # In case you want to debug edk2, you need to add EDK2_BUILD=DEBUG
+    # We build TF-A and RMM in Debug, but keep the same log level than Release.
+    make -j$(nproc) \
+        RMM_BUILD=Debug RMM_LOG_LEVEL=40 \
+        TF_A_DEBUG=1 TF_A_LOGLVL=40
+
     cd ../../
     out=$(assets_folder $board)
     rm -rf $out
@@ -42,6 +46,7 @@ run_vm()
 
     cp -f ./realm_vm.sh $out/realm_vm.sh
 
+    RUN_VM_TMUX_EXTRA_COMMANDS=${RUN_VM_TMUX_EXTRA_COMMANDS:-}
     # rawer send control-c instead of killing socat
     unset TMUX
     tmux -L PATH \
@@ -51,5 +56,6 @@ run_vm()
         split-window 'echo Guest; socat -,rawer TCP-LISTEN:54323' \; \
         select-layout tiled \; \
         split-window -p 20 bash -cx "$qemu_cmd || read" \; \
-        select-pane -t 3
+        select-pane -t 3 \; \
+        ${RUN_VM_TMUX_EXTRA_COMMANDS}
 }

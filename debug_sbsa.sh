@@ -18,6 +18,7 @@ cat > $assets/gdb_debug_commands << EOF
 # b DxeMain
 
 set pagination off
+source gdb_next.py
 
 add-symbol-file $assets/trusted-firmware-a/build/qemu_sbsa/debug/bl1/bl1.elf
 b bl1_main

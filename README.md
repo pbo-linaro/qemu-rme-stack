@@ -4,7 +4,8 @@ QEMU RME Stack
 Build RME Stack using a container.
 Full instructions are [here](https://linaro.atlassian.net/wiki/spaces/QEMU/pages/29051027459/Building+an+RME+stack+for+QEMU#With-the-OP-TEE-build-environment).
 
-You need podman installed on your system to build and debug platforms.
+You need podman installed to build.
+You need tmux installed to run machines.
 
 ```
 # build image using:

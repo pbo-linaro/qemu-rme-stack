@@ -31,7 +31,9 @@ and debug a machine with:
 ./container.sh ./build_virt_debug.sh
 ./debug_sbsa.sh /path/to/qemu-system-aarch64
 
-Two new commands are available in gdb: next-binary, next-source.
-They allow to continue execution until source file change, or current binary
-change. It can be used to track exception level changes or interrupts.
+New commands are available in gdb:
+- arm-exception-level: print current EL for cpu
+- next-arm-exception-level: run until EL change
+- next-binary: run until a different binary is executed
+- next-source: run until a different source file is reached
 ```

@@ -1,5 +1,4 @@
 import gdb
-import time
 
 def current_symbol():
     try:
@@ -29,6 +28,13 @@ def current_line():
     except:
         return ''
 
+def current_arm_exception_level():
+    cpsr = gdb.selected_frame().read_register('cpsr')
+    # bits 3:2 is EL
+    # value must be read as bytes and not int, or signed value change the result
+    el = cpsr.bytes[0] >> 2 & 0b11
+    return el
+
 def current_location():
     return current_source() + ':' + str(current_line())
 
@@ -40,7 +46,7 @@ def step_instruction_until_state_change(state_name, get_state):
     last_symbol = from_symbol
     last_location = from_location
     while True:
-        gdb.execute("stepi")
+        gdb.execute('stepi')
         new_state = get_state()
         if new_state and new_state != from_state:
             print('from_{}: {}'.format(state_name, from_state))
@@ -48,14 +54,14 @@ def step_instruction_until_state_change(state_name, get_state):
             print('from: {} @ {}'.format(from_symbol, from_location))
             print('last: {} @ {}'.format(last_symbol, last_location))
             print('to: {} @ {}'.format(current_symbol(), current_location()))
-            return 
+            return
         last_symbol = current_symbol()
         last_location = current_location()
 
 # Single step until we reach a new object file
 class next_binary(gdb.Command):
     def __init__(self):
-        super(next_binary, self).__init__("next-binary", gdb.COMMAND_USER)
+        super(next_binary, self).__init__('next-binary', gdb.COMMAND_USER)
 
     def invoke(self, argument, fromtty):
         step_instruction_until_state_change('binary', current_binary)
@@ -63,10 +69,28 @@ class next_binary(gdb.Command):
 # Single step until we reach a new source file
 class next_source(gdb.Command):
     def __init__(self):
-        super(next_source, self).__init__("next-source", gdb.COMMAND_USER)
+        super(next_source, self).__init__('next-source', gdb.COMMAND_USER)
 
     def invoke(self, argument, fromtty):
         step_instruction_until_state_change('source', current_source)
 
+# Single step until we reach a new source file
+class next_arm_exception_level(gdb.Command):
+    def __init__(self):
+        super(next_arm_exception_level, self).__init__('next-arm-exception-level', gdb.COMMAND_USER)
+
+    def invoke(self, argument, fromtty):
+        step_instruction_until_state_change('EL', current_arm_exception_level)
+
+# Print current exception level
+class arm_exception_level(gdb.Command):
+    def __init__ (self):
+        super (arm_exception_level, self).__init__ ("arm-exception-level", gdb.COMMAND_USER)
+
+    def invoke (self, arg, from_tty):
+        print(current_arm_exception_level())
+
+next_arm_exception_level()
+arm_exception_level()
 next_binary()
 next_source()

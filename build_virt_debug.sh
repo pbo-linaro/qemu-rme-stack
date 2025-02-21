@@ -10,7 +10,7 @@ assets=virt/run_debug
 build_board \
     $build \
     qemu_v8_cca.xml \
-    cca/v4 \
+    $CCA_VERSION \
     $BUILD_DEBUG_ARGS
 
 copy_assets \

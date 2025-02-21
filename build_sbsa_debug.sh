@@ -10,7 +10,7 @@ assets=sbsa/run_debug
 build_board \
     $build \
     sbsa_cca.xml \
-    cca/v4 \
+    $CCA_VERSION \
     $BUILD_DEBUG_ARGS
 
 copy_assets \

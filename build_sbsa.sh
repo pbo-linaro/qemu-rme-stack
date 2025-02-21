@@ -10,7 +10,7 @@ assets_folder=sbsa/run
 build_board \
     $build_folder \
     sbsa_cca.xml \
-    cca/v4
+    $CCA_VERSION
 
 copy_assets \
     $build_folder \

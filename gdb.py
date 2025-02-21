@@ -30,9 +30,11 @@ def current_line():
 
 def current_arm_exception_level():
     cpsr = gdb.selected_frame().read_register('cpsr')
+    # returned value is a gdb.Value, which supports bitwise operation, but
+    # rounds to another value, resulting in a wrong EL.
+    cpsr = int(cpsr)
     # bits 3:2 is EL
-    # value must be read as bytes and not int, or signed value change the result
-    el = cpsr.bytes[0] >> 2 & 0b11
+    el = cpsr >> 2 & 0b11
     return el
 
 def current_location():

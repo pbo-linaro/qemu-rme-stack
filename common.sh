@@ -1,3 +1,7 @@
+# In case you want to debug edk2, you need to add EDK2_BUILD=DEBUG
+# We build TF-A and RMM in Debug, but keep the same log level than Release.
+BUILD_DEBUG_ARGS="RMM_BUILD=Debug RMM_LOG_LEVEL=40 TF_A_DEBUG=1 TF_A_LOGLVL=40"
+
 build_board()
 {
     if [ -z "${DISABLE_CONTAINER_CHECK:-}" ]; then
@@ -7,6 +11,7 @@ build_board()
     build_folder=$1; shift
     manifest=$1; shift
     branch=$1; shift
+    build_args=$*
 
     mkdir -p $build_folder
     pushd $build_folder
@@ -24,12 +29,7 @@ build_board()
     sed -e 's/Og/O0/' -i ../rmm/toolchains/common.cmake
 
     make -j$(nproc) toolchains
-    # In case you want to debug edk2, you need to add EDK2_BUILD=DEBUG
-    # We build TF-A and RMM in Debug, but keep the same log level than Release.
-    make -j$(nproc) \
-        RMM_BUILD=Debug RMM_LOG_LEVEL=40 \
-        TF_A_DEBUG=1 TF_A_LOGLVL=40
-
+    make -j$(nproc) $build_args
     popd
 }
 
@@ -44,6 +44,42 @@ copy_assets()
     do
         rsync -avL --mkpath $build_folder/$o $assets_folder/$(dirname $o)/
     done
+}
+
+gdb_debug_script()
+{
+    assets_folder=$1; shift
+    tf_a_build=$1; shift
+    rmm_address=$1; shift
+    cat << EOF
+# If you want to debug edk2, stack must be built with EDK2_BUILD=DEBUG.
+# For edk2, we need to find where each file is loaded.
+# Check QEMU output for 'Loading DxeCore at 0x00BF265000 EntryPoint=0x00BF26E8F4'
+# add-symbol-file $assets_folder/edk2/Build/ArmVirtQemuKernel-AARCH64/DEBUG_GCC5/AARCH64/DxeCore.debug 0x00BF265000
+# b DxeMain
+
+set pagination off
+source gdb_next.py
+
+add-symbol-file $assets_folder/trusted-firmware-a/build/$tf_a_build/debug/bl1/bl1.elf
+b bl1_main
+add-symbol-file $assets_folder/trusted-firmware-a/build/$tf_a_build/debug/bl2/bl2.elf
+b bl2_main
+add-symbol-file $assets_folder/trusted-firmware-a/build/$tf_a_build/debug/bl31/bl31.elf
+b bl31_main
+
+# TF-A reports where it loads the RMM.
+# Reserved RMM memory [0x<addr>, ....] in Device tree
+add-symbol-file $assets_folder/rmm/build/Debug/rmm.elf $rmm_address
+b rmm_main
+
+add-symbol-file $assets_folder/linux/vmlinux
+b start_kernel
+
+target remote :1234
+# reach bl1_main
+c
+EOF
 }
 
 run_vm()

@@ -16,7 +16,7 @@ source ./common.sh
 # to run the guest.
 # -serial: the following parameters allow to use separate consoles for
 # Firmware (port 54320), Secure payload (54321), host (54322) and guest (54323).
-assets_folder=sbsa/run
+assets_folder=${RUN:-sbsa/run}
 run_vm \
 $assets_folder \
 $qemu_aarch64_cmd \

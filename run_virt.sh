@@ -18,7 +18,7 @@ source ./common.sh
 # Firmware (port 54320), Secure payload (54321), host (54322) and guest (54323).
 #
 # run with nokaslr to allow debug linux kernel
-assets_folder=virt/run
+assets_folder=${RUN:-virt/run}
 run_vm \
 $assets_folder \
 $qemu_aarch64_cmd \

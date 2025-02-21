@@ -59,7 +59,7 @@ gdb_debug_script()
 # b DxeMain
 
 set pagination off
-source gdb_next.py
+source gdb.py
 
 add-symbol-file $assets_folder/trusted-firmware-a/build/$tf_a_build/debug/bl1/bl1.elf
 b bl1_main

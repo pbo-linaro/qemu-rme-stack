@@ -55,14 +55,15 @@ run_vm()
 
     RUN_VM_TMUX_EXTRA_COMMANDS=${RUN_VM_TMUX_EXTRA_COMMANDS:-}
     # rawer send control-c instead of killing socat
+    # sleep 1 before qemu to let the time for socat to listen on socket
     unset TMUX
-    tmux -L PATH \
+    tmux \
         new-session -s rme 'echo Firmware; socat - TCP-LISTEN:54320' \; \
         split-window 'echo Secure Payload; socat - TCP-LISTEN:54321' \; \
         split-window 'echo Host; socat -,rawer TCP-LISTEN:54322' \; \
         split-window 'echo Guest; socat -,rawer TCP-LISTEN:54323' \; \
-        select-layassets tiled \; \
-        split-window -p 20 bash -cx "$qemu_cmd || read" \; \
+        select-layout tiled \; \
+        split-window -p 20 bash -cx "sleep 1; $qemu_cmd || read" \; \
         select-pane -t 3 \; \
         ${RUN_VM_TMUX_EXTRA_COMMANDS}
 }

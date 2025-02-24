@@ -28,14 +28,42 @@ def current_line():
     except:
         return ''
 
+def current_arm_world():
+    # https://developer.arm.com/documentation/ddi0601/2024-12/AArch64-Registers/SCR-EL3--Secure-Configuration-Register
+    # NS: Non-secure bit. This field is used in combination with SCR_EL3.NSE to select the Security state of EL2 and lower Exception levels.
+    #
+    # https://developer.arm.com/documentation/den0125/latest/Arm-CCA-Extensions
+    # The following table shows how the bits control execution and access between the four worlds
+    try:
+        # register is not available if QEMU does not run with -M virt,secure=on
+        scr_el3 = int(gdb.selected_frame().read_register('SCR_EL3'))
+    except:
+        return None
+    ns = scr_el3 >> 0 & 0b1
+    nse = scr_el3 >> 62 & 0b1
+    match (nse, ns):
+        case (0, 0):
+            return 'S' # Secure
+        case (0, 1):
+            return 'NS' # Non Secure
+        case (1, 0):
+            return 'Root'
+        case (1, 1):
+            return 'R' # Realm
+    return None
+
 def current_arm_exception_level():
-    cpsr = gdb.selected_frame().read_register('cpsr')
     # returned value is a gdb.Value, which supports bitwise operation, but
-    # rounds to another value, resulting in a wrong EL.
-    cpsr = int(cpsr)
+    # rounds to another value, resulting in a wrong EL. So convert to int.
+    cpsr = int(gdb.selected_frame().read_register('cpsr'))
     # bits 3:2 is EL
     el = cpsr >> 2 & 0b11
-    return el
+    if el == 3:
+        return 'EL3'
+    world = current_arm_world()
+    if world is None:
+        return 'EL' + str(el)
+    return world + '-EL' + str(el)
 
 def current_location():
     return current_source() + ':' + str(current_line())
@@ -76,7 +104,7 @@ class next_source(gdb.Command):
     def invoke(self, argument, fromtty):
         step_instruction_until_state_change('source', current_source)
 
-# Single step until we reach a new source file
+# Single step until exception level change
 class next_arm_exception_level(gdb.Command):
     def __init__(self):
         super(next_arm_exception_level, self).__init__('next-arm-exception-level', gdb.COMMAND_USER)
@@ -92,7 +120,7 @@ class arm_exception_level(gdb.Command):
     def invoke (self, arg, from_tty):
         print(current_arm_exception_level())
 
-next_arm_exception_level()
 arm_exception_level()
+next_arm_exception_level()
 next_binary()
 next_source()

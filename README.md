@@ -28,7 +28,7 @@ and debug a machine with:
 ```
 ./container.sh ./build_virt_debug.sh
 ./debug_virt.sh /path/to/qemu-system-aarch64
-./container.sh ./build_virt_debug.sh
+./container.sh ./build_sbsa_debug.sh
 ./debug_sbsa.sh /path/to/qemu-system-aarch64
 
 New commands are available in gdb:

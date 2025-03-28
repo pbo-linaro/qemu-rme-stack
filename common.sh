@@ -1,6 +1,6 @@
 # In case you want to debug edk2, you need to add EDK2_BUILD=DEBUG
 # We build TF-A and RMM in Debug, but keep the same log level than Release.
-BUILD_DEBUG_ARGS="RMM_BUILD=Debug RMM_LOG_LEVEL=40 TF_A_DEBUG=1 TF_A_LOGLVL=40"
+BUILD_DEBUG_ARGS="RMM_BUILD=Debug RMM_LOG_LEVEL=40 TF_A_DEBUG=1 TF_A_LOGLVL=40 EDK2_BUILD=DEBUG"
 CCA_VERSION=cca/v7
 
 build_board()
@@ -51,12 +51,13 @@ gdb_debug_script()
 {
     assets_folder=$1; shift
     tf_a_build=$1; shift
+    edk2_build_folder=$1; shift
     rmm_address=$1; shift
     cat << EOF
 # If you want to debug edk2, stack must be built with EDK2_BUILD=DEBUG.
 # For edk2, we need to find where each file is loaded.
-# Check QEMU output for 'Loading DxeCore at 0x00BF265000 EntryPoint=0x00BF26E8F4'
-# add-symbol-file $assets_folder/edk2/Build/ArmVirtQemuKernel-AARCH64/DEBUG_GCC5/AARCH64/DxeCore.debug 0x00BF265000
+# Check QEMU output for 'Loading DxeCore at 0x00BF26F000 EntryPoint=0x00BF26E8F4'
+# add-symbol-file $assets_folder/$edk2_build_folder/DEBUG_GCC5/AARCH64/DxeCore.debug 0x00BF26F000
 # b DxeMain
 
 set pagination off

@@ -24,6 +24,7 @@ copy_assets \
     trusted-firmware-a/build/qemu/debug/bl2/bl2.elf \
     trusted-firmware-a/build/qemu/debug/bl31/bl31.elf \
     rmm/build/Debug/rmm.elf \
+    edk2/Build/ArmVirtQemuKernel-AARCH64/DEBUG_GCC5/AARCH64/DxeCore.debug \
     linux/vmlinux
 
-gdb_debug_script $assets qemu 0x40100000 > $assets/gdb
+gdb_debug_script $assets qemu edk2/Build/ArmVirtQemuKernel-AARCH64 0x40100000 > $assets/gdb

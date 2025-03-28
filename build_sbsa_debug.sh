@@ -26,6 +26,7 @@ copy_assets \
     trusted-firmware-a/build/qemu_sbsa/debug/bl2/bl2.elf \
     trusted-firmware-a/build/qemu_sbsa/debug/bl31/bl31.elf \
     rmm/build/Debug/rmm.elf \
+    edk2-build/Build/SbsaQemuRme/DEBUG_GCC5/AARCH64/DxeCore.debug \
     linux/vmlinux
 
-gdb_debug_script $assets qemu_sbsa 0x10000000000 > $assets/gdb
+gdb_debug_script $assets qemu_sbsa edk2-build/Build/SbsaQemuRme 0x10000000000 > $assets/gdb

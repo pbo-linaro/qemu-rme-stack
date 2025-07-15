@@ -1,7 +1,7 @@
 # In case you want to debug edk2, you need to add EDK2_BUILD=DEBUG
 # We build TF-A and RMM in Debug, but keep the same log level than Release.
 BUILD_DEBUG_ARGS="RMM_BUILD=Debug RMM_LOG_LEVEL=40 TF_A_DEBUG=1 TF_A_LOGLVL=40 EDK2_BUILD=DEBUG"
-CCA_VERSION=cca/v8
+CCA_VERSION=cca/v9
 
 build_board()
 {
